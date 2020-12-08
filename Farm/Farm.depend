@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1607414618 source:/home/hieudang/home/hieudang/workspace/Farm/main.cpp
+	"Point2D.h"
+
+1607418300 /home/hieudang/home/hieudang/workspace/Farm/Point2D.h
+	<iostream>
+	<math.h>
+
+1415674433 source:/home/hieudang/home/hieudang/workspace/Farm/Chicken.cpp
+
+1415670836 source:/home/hieudang/home/hieudang/workspace/Farm/Cow.cpp
+
+1415677925 source:/home/hieudang/home/hieudang/workspace/Farm/Farm.cpp
+
+1415670836 source:/home/hieudang/home/hieudang/workspace/Farm/Pig.cpp
+
+1607418051 source:/home/hieudang/home/hieudang/workspace/Farm/Point2D.cpp
+	"Point2D.h"
+
+1415670836 source:/home/hieudang/home/hieudang/workspace/Farm/Sheep.cpp
+
+1607415417 source:/home/hieudang/home/hieudang/workspace/Farm/Animal.cpp
+
