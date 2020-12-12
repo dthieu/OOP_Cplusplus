@@ -18,17 +18,8 @@ public:
 	void Nhap();
 	void Xuat();
 	// If implement friend out of class => no prefix "Point2D::" just write "istream & operator >> (istream &in, Point2D &p){...}"
-	friend istream & operator >> (istream &in, Point2D &p){
-        std::cout << "x = ";
-        in >> p.x;
-        std::cout << "y = ";
-        in >> p.y;
-        return in;
-	}
-	friend ostream & operator << (ostream &out, const Point2D &p){
-        out << "(" << p.x << ", " << p.y << ")";
-        return out;
-	}
+	friend istream & operator >> (istream &in, Point2D &p);
+	friend ostream & operator << (ostream &out, const Point2D &p);
 
 	//Hàm tính khoảng cách giữa 2 điểm
 	float KhoangCach(Point2D);

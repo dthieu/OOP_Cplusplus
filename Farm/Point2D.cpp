@@ -29,7 +29,17 @@ void Point2D::Xuat()
 {
 	cout << "(" << x << "," << y << ")";
 }
-
+istream & operator >> (istream &in, Point2D &p){
+        std::cout << "x = ";
+        in >> p.x;
+        std::cout << "y = ";
+        in >> p.y;
+        return in;
+}
+ostream & operator << (ostream &out, const Point2D &p){
+        out << "(" << p.x << ", " << p.y << ")";
+        return out;
+}
 //Hàm tính khoảng cách giữa 2 điểm (thuộc lớp Point2D)
 // Truyền vào hàm là 1 tham số thuộc kiểu Point2D
 // Trả về kiểu thực khoảng cách giữa 2 điểm

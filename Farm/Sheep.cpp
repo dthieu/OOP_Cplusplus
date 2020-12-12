@@ -1,8 +1,19 @@
-﻿#include "Sheep.h"
+#include "Sheep.h"
+
+istream& Sheep::getInputInfo(istream& in, std::unique_ptr<Animal> &a) {
+    cout << "\n-> Nhap MA SO (ID) con vat: SHEEP_";
+    in >> a->ID;
+    a->ID = "SHEEP_" + a->ID;
+    cout << "-> Nhap TUOI (Age) con vat: ";
+    in >> a->Age;
+    cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
+    in >> a->Weight;
+    return in;
+}
 
 void Sheep::Talk()
 {
-	cout << "Be...Be...!\n";
+	cout << " Be...Be...!\n";
 }
 
 void Sheep::ChoAn(float kg)
@@ -29,8 +40,10 @@ void Sheep::Move(Point2D P)
 	// nen xoa no ra khoi danh sach con sheep
 
 	// Kiểm tra mức độ no nếu < 50 thì con vật sẽ kêu
-	if (mucdono < 50 && mucdono >= 10)
+	if (mucdono < 50 && mucdono >= 10) {
+        std::cout << "[" << this->GetID() << "] <doi qua! doi qua!> ";
 		this->Talk();
+    }
 	this->SetMucDoNo(mucdono);
 
 	this->SetPos(P); // Đặt lại vị trí của con vật

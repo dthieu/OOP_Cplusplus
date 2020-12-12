@@ -1,8 +1,23 @@
-﻿#include "Farm.h"
+#include "Farm.h"
+
+void Farm::SapXepCacConVat(){
+    std::sort(arr_animal.begin(),
+              arr_animal.end(),
+              [](const std::unique_ptr<Animal> &p1, const std::unique_ptr<Animal> &p2) {
+                    return (p1->GetID() < p2->GetID());
+              });
+}
+
+int Farm::getSoLuongConVat() { return arr_animal.size(); }
+
+void Farm::ClearAnimalList(){
+    if (arr_animal.size() > 0)
+        arr_animal.clear();
+}
 
 void Farm::Menu()
 {
-	cout << "-------------------------------------------------------\n";
+	cout << "\n-------------------------------------------------------\n";
 	cout << "                        MENU                          -\n";
 	cout << "-------------------------------------------------------\n";
 	cout << "-  1. THEM CAC CON VAT VAO TRANG TRAI                 -\n";
@@ -12,55 +27,91 @@ void Farm::Menu()
 	cout << "-  5. CHO DONG LOAT TAT CA CAC CON VAT AN             -\n";
 	cout << "-  6. CHO MOT CON CO MA SO NHAT DINH AN               -\n";
 	cout << "-  7. CHO CON VAT DI CHUYEN TOI VI TRI (x, y)         -\n";
-	cout << "-  8. THOAT.                                          -\n";
+	cout << "-  8. DOC THONG TIN CON VAT TU FILE                   -\n";
+	cout << "-  9. XUAT THONG TIN CON VAT RA FILE                  -\n";
+	cout << "-  0. THOAT.                                          -\n";
 	cout << "-------------------------------------------------------\n";
 }
 
-void Farm::MenuNhapConVat()
-{
-	cout << "\n" << COW << ". Nhap Bo (Cow).\n";
-	cout << SHEEP   << ". Nhap Cuu (Sheep).\n";
-	cout << PIG     << ". Nhap Heo (Pig).\n";
-	cout << CHICKEN << ". Nhap Ga (Chicken).\n";
-	cout << "4. Thoat!\n"
-	cout << "\tMoi chon: ";
+void Farm::LayThongTinConVatTuFile(string filename){
+    std::ifstream file(filename);
+    std::unique_ptr<Animal> animal;
+    std::unique_ptr<AnimalFactory> fac(new AnimalFactory());
+    if (file.is_open()){
+        string id;
+        float age, weight, mucdono;
+        while (!file.eof())
+        {
+            file >> id >> age >> weight >> mucdono;
+            if (id.find("COW") == 0) // ID starts with COW_
+                animal = fac->createAnimal(AnimalFactory::COW);
+            else if (id.find("SHEEP") == 0) // ID starts with SHEEP_
+                animal = fac->createAnimal(AnimalFactory::SHEEP);
+            else if (id.find("PIG") == 0) // ID starts with PIG_
+                animal = fac->createAnimal(AnimalFactory::PIG);
+            else if (id.find("CHICKEN") == 0) // ID starts with CHICKEN_
+                animal = fac->createAnimal(AnimalFactory::CHICKEN);
+            else continue;
+            animal->SetID(id);
+            animal->SetAge(age);
+            animal->SetWeight(weight);
+            animal->SetMucDoNo(mucdono);
+            arr_animal.push_back(std::move(animal));
+        }
+        file.close();
+        SapXepCacConVat();
+    } else {
+        std::cout << "Cannot open file " << filename << std::endl;
+    }
 }
 
 void Farm::ThemConVat()
 {
 	int ichon;
 	// Các biến tạm
-	std::unique_ptr<Animal> animal;
-
+	std::unique_ptr<AnimalFactory> animalFac;
+    std::unique_ptr<Animal> animal;
+    std::cout << "\n\tDANH SACH CAC CON VAT\n";
+    XuatDanhSachConVat();
 	while (1)
 	{
-        MenuNhapConVat();
+        cout << "\n0. Nhap Bo (Cow).\n";
+        cout << "1. Nhap Cuu (Sheep).\n";
+        cout << "2. Nhap Heo (Pig).\n";
+        cout << "3. Nhap Ga (Chicken).\n";
+        cout << "4. Thoat!\n";
+        cout << "\tMoi chon: ";
 		cin >> ichon;
 		switch (ichon)
 		{
-		case COW:
-            animal = std::make_unique<Cow>();
+		case 0: // COW
+            animal = animalFac->createAnimal(AnimalFactory::COW);
 			cin >> animal;
-			arr_animal.push_back(animal);
+			if (!existID(animal->GetID()))
+                arr_animal.push_back(std::move(animal));
 			break;
-		case SHEEP:
-			animal = std::make_unique<Cow>();
+		case 1: // SHEEP
+			animal = animalFac->createAnimal(AnimalFactory::SHEEP);
 			cin >> animal;
-			arr_animal.push_back(animal);
+			if (!existID(animal->GetID()))
+                arr_animal.push_back(std::move(animal));
 			break;
-		case PIG:
-			animal = std::make_unique<Cow>();
+		case 2: // PIG
+			animal = animalFac->createAnimal(AnimalFactory::PIG);
 			cin >> animal;
-			arr_animal.push_back(animal);
+			if (!existID(animal->GetID()))
+                arr_animal.push_back(std::move(animal));
 			break;
-		case CHICKEN:
-			animal = std::make_unique<Cow>();
+		case 3: // CHICKEN
+			animal = animalFac->createAnimal(AnimalFactory::CHICKEN);
 			cin >> animal;
-			arr_animal.push_back(animal);
+			if (!existID(animal->GetID()))
+                arr_animal.push_back(std::move(animal));
 			break;
         case 4:
+            SapXepCacConVat();
             return;
-        case default:
+        default:
             std::cout << "Invalid choice!";
             break;
 		}
@@ -69,444 +120,148 @@ void Farm::ThemConVat()
 
 void Farm::XuatDanhSachConVat()
 {
-	int i;
-
-	cout << "\tDanh sach cac con BO (Cow):\n";
-	if (COW.size() == 0)
-		cout << "Danh sach rong!\n";
-	else
-	{
-		for (i = 0; i < COW.size(); ++i)
-		{
-			cout << "- Con thu " << i + 1 << ":\n";
-			COW[i].Xuat();
-			cout << endl;
-		}
-	}
-	//----------------------------------------------
-	cout << "\tDanh sach cac con CUU (Sheep):\n";
-	if (SHEEP.size() == 0)
-		cout << "Danh sach rong!\n";
-	else
-	{
-		for (i = 0; i < SHEEP.size(); ++i)
-		{
-			cout << "- Con thu " << i + 1 << ":\n";
-			SHEEP[i].Xuat();
-			cout << endl;
-		}
-	}
-	//-----------------------------------------------
-	cout << "\tDanh sach cac con HEO (Pig):\n";
-	if (PIG.size() == 0)
-		cout << "Danh sach rong!\n";
-	else
-	{
-		for (i = 0; i < PIG.size(); ++i)
-		{
-			cout << "- Con thu " << i + 1 << ":\n";
-			PIG[i].Xuat();
-			cout << endl;
-		}
-	}
-		//----------------------------------------------
-	cout << "\tDanh sach cac con GA (Chicken):\n";
-	if (CHICKEN.size() == 0)
-		cout << "Danh sach rong!\n";
-	else
-	{
-		for (i = 0; i < CHICKEN.size(); ++i)
-		{
-			cout << "- Con thu " << i + 1 << ":\n";
-			CHICKEN[i].Xuat();
-			cout << endl;
-		}
-	}
+    cout << std::setw(20) << "ID"
+            << std::setw(10) << "Age"
+            << std::setw(10) << "Weight"
+            << std::setw(15) << "Full_level(%)" << std::endl;
+    for (auto &pep : arr_animal) {
+        std::cout << pep << std::endl;
+    }
 }
 
-void Farm::Giet1ConVat()
+void Farm::XuatThongTinConVatRaFile(string fileName){
+    SapXepCacConVat();
+    ofstream file(fileName);
+    if (file.is_open()){
+        for (auto &animal : arr_animal) {
+            file << animal->GetID() << " " << animal->GetAge() << " "
+                 << animal->GetWeight() << " " << animal->GetMucDoNo()
+                 << "\n";
+        }
+        file.close();
+    } else {
+        std::cout << "Cannot write file " << fileName << std::endl;
+    }
+}
+
+void Farm::Giet1ConVat(const string &id)
 {
+    int killed = 0;
 	// Giết một con vật đầu tiên trong danh sách các con vật
-	if (COW.size() != 0)
-	{
-		COW.erase(COW.begin());
-		cout << "Giet thanh cong!\n";
-	}
-	else
-		if (SHEEP.size() != 0)
-		{
-			SHEEP.erase(SHEEP.begin());
-			cout << "Giet thanh cong!\n";
-		}
-	else
-		if (PIG.size() != 0)
-		{
-			PIG.erase(PIG.begin());
-			cout << "Giet thanh cong!\n";
-		}
-	else
-		if (CHICKEN.size() != 0)
-		{
-			CHICKEN.erase(CHICKEN.begin());
-			cout << "Giet thanh cong!\n";
-		}
-	else
-		cout << "Khong co con vat nao de giet!\n";
+    for (int i = 0; i < arr_animal.size(); i++) {
+        if (arr_animal[i]->GetID().compare(id) == 0) { // same
+            arr_animal.erase(arr_animal.begin() + i); // kill animal
+            std::cout << "Da giet con vat co id " << id << endl;
+            killed = 1;
+            break;
+        }
+    }
+    if (!killed){
+        std::cout << "Khong co con vat [" << id << "] trong danh sach!\n";
+    }
 }
 
 void Farm::ThongTinSautGio(float t)
 {
-	int i;
-	float temp;
-	int tuoi = (int)t/24;
-	cout << "\n--- DANH SACH CAC CON VAT SAU " << t << " GIO ---\n\n";
-	cout << "-> Danh sach cac con BO (Cow):\n";
-	if (COW.size() != 0)
-	{
-		for (i = 0; i < COW.size(); ++i)
-		{
-			temp = COW[i].GetMucDoNo() - (t * 5) / 8;
-			if (temp >= 50)
-			{
-				COW[i].SetMucDoNo(temp);
-				COW[i].Xuat();
-			}
-			else if (temp < 50 && temp > 10)
-			{
-				COW[i].Talk();
-				COW[i].SetMucDoNo(temp);
-				COW[i].Xuat();
-			}
-			else if (temp < 10) // Nếu con vật có độ no nhỏ hơn 10% tức là nó đã chết => xóa sổ nó khỏi danh sách.
-				COW.erase(COW.begin() + i);
-			// Cập nhật lại tuổi con vật nếu giờ lớn hơn >= 24
-			tuoi += COW[i].GetAge();
-			COW[i].SetAge(tuoi);
-		}
-	}
-	else
-		cout << "Danh sach rong!\n";
-	//////////////////////////////////////////////////////////////////////////
+    if (t <= 0) {
+        std::cout << "Hours need to great than 0!\n";
+        return;
+    }
+	float do_no_sau_t_h;
+	float tuoi = t/24.;
+	vector<int> deleted_idx;
+    for (int i = 0; i < arr_animal.size(); ++i)
+    {
+        if (arr_animal[i]->GetID().find("COW") == 0) // ID starts with COW_
+            do_no_sau_t_h = arr_animal[i]->GetMucDoNo() - (t * 5) / 8;
+        else if (arr_animal[i]->GetID().find("SHEEP") == 0) // ID starts with SHEEP_
+            do_no_sau_t_h = arr_animal[i]->GetMucDoNo() - (t * 6) / 8;
+        else if (arr_animal[i]->GetID().find("PIG") == 0) // ID starts with PIG_
+            do_no_sau_t_h = arr_animal[i]->GetMucDoNo() - (t * 7) / 8;
+        else if (arr_animal[i]->GetID().find("CHICKEN") == 0) // ID starts with CHICKEN_
+            do_no_sau_t_h = arr_animal[i]->GetMucDoNo() - (t * 10) / 12;
+        else continue;
 
-	cout << "-> Danh sach cac con CUU (Sheep):\n";
-	if (SHEEP.size() != 0)
-	{
-		for (i = 0; i < SHEEP.size(); ++i)
-		{
-			temp = SHEEP[i].GetMucDoNo() - (t * 6) / 8;
-			if (temp >= 50)
-			{
-				SHEEP[i].SetMucDoNo(temp);
-				SHEEP[i].Xuat();
-			}
-			else if (temp < 50 && temp > 10)
-			{
-				SHEEP[i].Talk();
-				SHEEP[i].SetMucDoNo(temp);
-				SHEEP[i].Xuat();
-			}
-			else if (temp < 10) // Nếu con vật có độ no nhỏ hơn 10% tức là nó đã chết => xóa sổ nó khỏi danh sách.
-				SHEEP.erase(SHEEP.begin() + i);
-			// Cập nhật lại tuổi con vật nếu giờ lớn hơn >= 24
-			tuoi += SHEEP[i].GetAge();
-			SHEEP[i].SetAge(tuoi);
-		}
-	}
-	else
-		cout << "Danh sach rong!\n";
-	//////////////////////////////////////////////////////////////////////////
-
-	cout << "-> Danh sach cac con HEO (Pig):\n";
-	if (PIG.size() != 0)
-	{
-		for (i = 0; i < PIG.size(); ++i)
-		{
-			temp = PIG[i].GetMucDoNo() - (t * 7) / 8;
-			if (temp >= 50)
-			{
-				PIG[i].SetMucDoNo(temp);
-				PIG[i].Xuat();
-			}
-			else if (temp < 50 && temp > 10)
-			{
-				PIG[i].Talk();
-				PIG[i].SetMucDoNo(temp);
-				PIG[i].Xuat();
-			}
-			else if (temp < 10) // Nếu con vật có độ no nhỏ hơn 10% tức là nó đã chết => xóa sổ nó khỏi danh sách.
-				PIG.erase(PIG.begin() + i);
-			// Cập nhật lại tuổi con vật nếu giờ lớn hơn >= 24
-			tuoi += PIG[i].GetAge();
-			PIG[i].SetAge(tuoi);
-		}
-	}
-	else
-		cout << "Danh sach rong!\n";
-	//////////////////////////////////////////////////////////////////////////
-
-	cout << "-> Danh sach cac con GA (Chicken):\n";
-	if (CHICKEN.size() != 0)
-	{
-		for (i = 0; i < CHICKEN.size(); ++i)
-		{
-			temp = CHICKEN[i].GetMucDoNo() - (t * 10) / 12;
-			if (temp >= 50)
-			{
-				CHICKEN[i].SetMucDoNo(temp);
-				CHICKEN[i].Xuat();
-			}
-			else if (temp < 50 && temp > 10)
-			{
-				CHICKEN[i].Talk();
-				CHICKEN[i].SetMucDoNo(temp);
-				CHICKEN[i].Xuat();
-			}
-			else if (temp < 10) // Nếu con vật có độ no nhỏ hơn 10% tức là nó đã chết => xóa sổ nó khỏi danh sách.
-				CHICKEN.erase(CHICKEN.begin() + i);
-			// Cập nhật lại tuổi con vật nếu giờ lớn hơn >= 24
-			tuoi += CHICKEN[i].GetAge();
-			CHICKEN[i].SetAge(tuoi);
-		}
-	}
-	else
-		cout << "Danh sach rong!\n";
+        if (do_no_sau_t_h >= 50)
+        {
+            arr_animal[i]->SetMucDoNo(do_no_sau_t_h);
+        }
+        else if (do_no_sau_t_h < 50 && do_no_sau_t_h > 10)
+        {
+            arr_animal[i]->SetMucDoNo(do_no_sau_t_h);
+            std::cout << "[" << arr_animal[i]->GetID() << "] <doi bung qua!> ";
+            arr_animal[i]->Talk();
+        }
+        else if (do_no_sau_t_h < 10) { // Nếu con vật có độ no nhỏ hơn 10% tức là nó đã chết => xóa sổ nó khỏi danh sách.
+            std::cout << "Con vat da chet sau " << t << "h" << std::endl;
+            cout << arr_animal[i] << std::endl;
+            deleted_idx.push_back(i);
+        }
+        // Cập nhật lại tuổi con vật nếu giờ lớn hơn >= 24
+        tuoi += arr_animal[i]->GetAge();
+        arr_animal[i]->SetAge(tuoi);
+    }
+    // Update animal list
+    if (deleted_idx.size()){
+        for (int j = deleted_idx.size()-1; j >= 0; j--)
+            arr_animal.erase(arr_animal.begin() + j);
+    }
+    // Xuat thong tin cac con vat sau t gio
+    XuatDanhSachConVat();
 }
 
 void Farm::ChoAnDongLoat(float kg)
 {
-	// Cho các con bò ăn
-	if (COW.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-			COW[i].ChoAn(kg);
-	}
-	// Cho các con cừu ăn
-	if (SHEEP.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-			SHEEP[i].ChoAn(kg);
-	}
-	// Cho các con heo ăn
-	if (PIG.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-			PIG[i].ChoAn(kg);
-	}
-	// Cho các con gà ăn
-	if (CHICKEN.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-			CHICKEN[i].ChoAn(kg);
-	}
+    // Cho cac con vat trong trang trai an
+    for (auto &pep : arr_animal) {
+        pep->ChoAn(kg);
+    }
 }
 
-void Farm::DiChuyenConVat(Point2D P)
+void Farm::DiChuyenConVat(const Point2D &P)
 {
-	// Di chuyển các con bò
-	if (COW.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-		{
-			COW[i].Move(P);
-			// Sau khi di chuyển nếu mức độ no < 10 thì xóa con vật đó khỏi danh sách
-			if (COW[i].GetMucDoNo() < 10)
-			{
-				COW.erase(COW.begin() + i);
-			}
-		}
-	}
-	// Di chuyển các con cừu
-	if (SHEEP.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-		{
-			SHEEP[i].Move(P);
-			// Sau khi di chuyển nếu mức độ no < 10 thì xóa con vật đó khỏi danh sách
-			if (SHEEP[i].GetMucDoNo() < 10)
-			{
-				SHEEP.erase(SHEEP.begin() + i);
-			}
-		}
-	}
-	// Di chuyển các con heo
-	if (PIG.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-		{
-			PIG[i].Move(P);
-			// Sau khi di chuyển nếu mức độ no < 10 thì xóa con vật đó khỏi danh sách
-			if (PIG[i].GetMucDoNo() < 10)
-			{
-				PIG.erase(PIG.begin() + i);
-			}
-		}
-	}
-	// Di chuyển các con gà
-	if (CHICKEN.size() != 0)
-	{
-		for (int i = 0; i < COW.size(); ++i)
-		{
-			CHICKEN[i].Move(P);
-			// Sau khi di chuyển nếu mức độ no < 10 thì xóa con vật đó khỏi danh sách
-			if (CHICKEN[i].GetMucDoNo() < 10)
-			{
-				CHICKEN.erase(CHICKEN.begin() + i);
-			}
-		}
-	}
+    std::vector<int> idx_die;
+    for (int i = 0; i < arr_animal.size(); i++) {
+        arr_animal[i]->Move(P);
+        if (arr_animal[i]->GetMucDoNo() < 10) {
+            idx_die.push_back(i);
+        }
+    }
+    if (idx_die.size() > 0) {
+        for (int j = idx_die.size()-1; j >= 0; j--){
+            arr_animal.erase(arr_animal.begin() + j);
+        }
+    }
+    XuatDanhSachConVat();
 }
 
 // Cho con vật có mã số X ăn
-void Farm::ChoIDXAn(float kg)
+void Farm::ChoIDXAn(const string &id, float kg)
 {
-	int ichon;
-	string _ID;
-	float ThucAn; // Lượng thức ăn
-	cout << "1. Cho Bo (Cow) an! <so luong BO: " << COW.size() << " con>\n";
-	cout << "2. Cho Cuu (Sheep) an! <so luong CUU: " << SHEEP.size() << " con>\n";
-	cout << "3. Cho Heo (Pig) an! <so luong HEO: " << PIG.size() << " con>\n";
-	cout << "4. Cho Ga (Chicken) an! <so luong GA: " << CHICKEN.size() << " con>\n";
-	cout << "\tMoi chon: ";
-	cin >> ichon;
-	switch (ichon)
-	{
-	case 1:
-		if (COW.size() != 0)
-		{
-			cout << "\tCho Bo (Cow) an.\n";
-			cout << "Danh sach cac ID cua Bo (Cow):\n";
-			for (int i = 0; i < COW.size(); i++)
-			{
-				cout << "\t" << COW[i].GetID() << endl;
-			}
-			while(1)
-			{
-				cout << "\nMoi nhap ma so (ID): ";
-				fflush(stdin);
-				getline(cin, _ID);
-				if (CheckIDCow(_ID) == -1)
-				{
-					cout << "Error! Khong ton tai ma so (ID) " << _ID << " trong danh sach Bo (Cow)!\n";
-					cout << "Vui long nhap lai...\n";
-				}
-				else
-					break;
-			}
-			cout << "Nhap khoi luong thuc an (kg): ";
-			cin >> ThucAn;
-			int result = CheckIDCow(_ID);
-			COW[result].ChoAn(ThucAn);
-			cout << "\nCho an thanh cong!\n";
-		}
-		else
-			cout << "Khong co con vat nao de cho an!\n";
-		break;
-	case 2:
-		if (SHEEP.size() != 0)
-		{
-			cout << "\tCho Cuu (Sheep) an.\n";
-			cout << "Danh sach cac ID cua Cuu (Sheep):\n";
-			for (int i = 0; i < SHEEP.size(); i++)
-			{
-				cout << "\t" << SHEEP[i].GetID() << endl;
-			}
-			while(1)
-			{
-				cout << "\nMoi nhap ma so (ID): ";
-				fflush(stdin);
-				getline(cin, _ID);
-				if (CheckIDSheep(_ID) == -1)
-				{
-					cout << "Error! Khong ton tai ma so (ID) " << _ID << " trong danh sach Cuu (Sheep)!\n";
-					cout << "Vui long nhap lai...\n";
-				}
-				else
-					break;
-			}
-			cout << "Nhap khoi luong thuc an (kg): ";
-			cin >> ThucAn;
-			int result = CheckIDSheep(_ID);
-			SHEEP[result].ChoAn(ThucAn);
-			cout << "\nCho an thanh cong!\n";
-		}
-		else
-			cout << "Khong co con vat nao de cho an!\n";
-		break;
-	case 3:
-		if (PIG.size() != 0)
-		{
-			cout << "\tCho Heo (Pig) an.\n";
-			cout << "Danh sach cac ID cua Heo (Pig):\n";
-			for (int i = 0; i < PIG.size(); i++)
-			{
-				cout << "\t" << PIG[i].GetID() << endl;
-			}
-			while(1)
-			{
-				cout << "\nMoi nhap ma so (ID): ";
-				fflush(stdin);
-				getline(cin, _ID);
-				if (CheckIDPig(_ID) == -1)
-				{
-					cout << "Error! Khong ton tai ma so (ID) " << _ID << " trong danh sach Heo (Pig)!\n";
-					cout << "Vui long nhap lai...\n";
-				}
-				else
-					break;
-			}
-			cout << "Nhap khoi luong thuc an (kg): ";
-			cin >> ThucAn;
-			int result = CheckIDPig(_ID);
-			PIG[result].ChoAn(ThucAn);
-			cout << "\nCho an thanh cong!\n";
-		}
-		else
-			cout << "Khong co con vat nao de cho an!\n";
-		break;
-	case 4:
-		if (CHICKEN.size() != 0)
-		{
-			cout << "\tCho Ga (Chicken) an.\n";
-			cout << "Danh sach cac ID cua Ga (Chicken):\n";
-			for (int i = 0; i < CHICKEN.size(); i++)
-			{
-				cout << "\t" << CHICKEN[i].GetID() << endl;
-			}
-			while(1)
-			{
-				cout << "\nMoi nhap ma so (ID): ";
-				fflush(stdin);
-				getline(cin, _ID);
-				if (CheckIDChicken(_ID) == -1)
-				{
-					cout << "Error! Khong ton tai ma so (ID) " << _ID << " trong danh sach Ga (Chicken)!\n";
-					cout << "Vui long nhap lai...\n";
-				}
-				else
-					break;
-			}
-			cout << "Nhap khoi luong thuc an (kg): ";
-			cin >> ThucAn;
-			int result = CheckIDChicken(_ID);
-			CHICKEN[result].ChoAn(ThucAn);
-			cout << "\nCho an thanh cong!\n";
-		}
-		else
-			cout << "Khong co con vat nao de cho an!\n";
-		break;
-	default:
-		break;
-	}
+    int flag = 0;
+    for (auto &animal : arr_animal) {
+        if (id.compare(animal->GetID()) == 0){
+            animal->ChoAn(kg);
+            std::cout << "Con vat [" << id << "] da duoc cho an!\n";
+            flag = 1;
+            break;
+        }
+    }
+    if (flag == 0) {
+        std::cout << "Error: Khong co con vat [" << id << "] trong danh sach!\n";
+    }
 }
 
 // kiểm tra ID con vat
-int Farm::CheckID(string str)
+int Farm::existID(const string &id)
 {
-	for (int i = 0; i < arr_animal.size(); i++)
+	for (auto &animal : arr_animal)
 	{
-		if (str.compare(arr_animal[i]->GetID()) == 0)
-			return i;
+		if (id.compare(animal->GetID()) == 0){
+            std::cout << "Error: ID [" << id << "] da ton tai trong danh sach!\n";
+			return 1;
+			break;
+        }
 	}
-	return -1;
+	return 0;
 }
-

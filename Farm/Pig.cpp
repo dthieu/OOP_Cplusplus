@@ -1,8 +1,20 @@
-﻿#include "Pig.h"
+#include "Pig.h"
+
+istream& Pig::getInputInfo(istream& in, std::unique_ptr<Animal> &a) {
+    std::cout << "\n-> Nhap MA SO (ID) con vat: PIG_";
+    in >> a->ID;
+    a->ID = "PIG_" + a->ID;
+    a->ID_ALL_ANIMAL.push_back(a->ID); // Sau khi nhập Mã số, đẩy nó vào vector ID_ALL_ANIMAL
+    std::cout << "-> Nhap TUOI (Age) con vat: ";
+    in >> a->Age;
+    std::cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
+    in >> a->Weight;
+    return in;
+}
 
 void Pig::Talk()
 {
-	cout << "Ut it...Ut it...\n";
+	std::cout << " Ut it...Ut it...\n";
 }
 
 void Pig::ChoAn(float kg)
@@ -27,8 +39,10 @@ void Pig::Move(Point2D P)
 	mucdono -= distance * 7; // mỗi mét di chuyển độ no giảm 7%
 
 	// Kiểm tra mức độ no nếu < 50 thì con vật sẽ kêu
-	if (mucdono < 50 && mucdono >= 10)
+	if (mucdono < 50 && mucdono >= 10) {
+        std::cout << "[" << this->GetID() << "] <doi qua! doi qua!> ";
 		this->Talk();
+    }
 	this->SetMucDoNo(mucdono);
 
 	this->SetPos(P); // Đặt lại vị trí của con vật

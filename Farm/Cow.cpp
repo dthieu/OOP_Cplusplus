@@ -1,8 +1,20 @@
-﻿#include "Cow.h"
+#include "Cow.h"
+
+istream& Cow::getInputInfo(istream& in, std::unique_ptr<Animal> &a) {
+    cout << "\n-> Nhap MA SO (ID) con vat: COW_";
+    in >> a->ID;
+    a->ID = "COW_" + a->ID;
+    a->ID_ALL_ANIMAL.push_back(a->ID); // Sau khi nhập Mã số, đẩy nó vào vector ID_ALL_ANIMAL
+    cout << "-> Nhap TUOI (Age) con vat: ";
+    in >> a->Age;
+    cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
+    in >> a->Weight;
+    return in;
+}
 
 void Cow::Talk()
 {
-	cout << "Um bo...Um bo...\n";
+	cout << " Um bo...Um bo...\n";
 }
 
 void Cow::ChoAn(float kg)
@@ -25,10 +37,12 @@ void Cow::Move(Point2D P)
 	float distance = this->GetPos().KhoangCach(P); // (đơn vị: m)
 	float mucdono = this->GetMucDoNo();
 	mucdono -= distance * 5; // mỗi mét di chuyển độ no giảm 5%
-	
+
 	// Kiểm tra mức độ no nếu < 50 thì con vật sẽ kêu
-	if (mucdono < 50 && mucdono >= 10)
+	if (mucdono < 50 && mucdono >= 10) {
+        std::cout << "[" << this->GetID() << "] <doi qua! doi qua!> ";
 		this->Talk();
+    }
 	this->SetMucDoNo(mucdono);
 
 	this->SetPos(P); // Đặt lại vị trí của con vật

@@ -1,6 +1,6 @@
 ﻿#include "Animal.h"
 
-Animal::Animal() : MucDoNo(50) {// Để con vật không bị chết
+Animal::Animal() : MucDoNo(100) {// Để con vật không bị chết
 }
 
 Animal::~Animal()
@@ -49,34 +49,16 @@ void Animal::SetWeight( float Weight )
 	this->Weight = Weight;
 }
 
-istream & operator >> (istream& in, std::unique_ptr<Animal> &a){
-	while (1)
-	{
-		cout << "-> Nhap MA SO (ID) con vat: ";
-		in >> a->ID;
-		if(CheckID(a->ID))
-			cout << "Error! MA SO nay da co trong du lieu. Vui long nhap lai...\n";
-		else break;
-	}
-	ID_ALL_ANIMAL.push_back(a->ID); // Sau khi nhập Mã số, đẩy nó vào vector ID_ALL_ANIMAL
-	cout << "-> Nhap TUOI (Age) con vat: ";
-	in >> a->Age;
-	cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
-	in >> a->Weight;
-	cout << endl;
-	return in
-}
-
 ostream & operator << (ostream &out, const std::unique_ptr<Animal> &a) {
-	out << "\t- Ma so (ID): " << a->ID << endl;
-	out << "\t- Tuoi (Age): " << a->Age << endl;
-	out << "\t- Can nang (Weight): " << a->Weight << endl;
-	out << "\t- Muc do no hien tai: " << a->MucDoNo << endl;
+	out.width(20); out << right << a->ID;
+    out.width(10); out << right << a->Age;
+    out.width(10); out << right << a->Weight;
+    out.width(10); out << right << a->MucDoNo;
 	return out;
 }
 
 // Kiểm tra Mã số con vật có tồn tại trong danh sách các mã số con vật có trong trang trại
-bool Animal::CheckID(string ID)
+bool Animal::CheckID(const string& ID)
 {
 	for (int i = 0; i < ID_ALL_ANIMAL.size(); ++i)
 		if (ID.compare(ID_ALL_ANIMAL[i]) == 0)
