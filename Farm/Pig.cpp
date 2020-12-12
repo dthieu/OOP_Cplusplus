@@ -1,14 +1,18 @@
 #include "Pig.h"
 
 istream& Pig::getInputInfo(istream& in, std::unique_ptr<Animal> &a) {
-    std::cout << "\n-> Nhap MA SO (ID) con vat: PIG_";
-    in >> a->ID;
-    a->ID = "PIG_" + a->ID;
-    a->ID_ALL_ANIMAL.push_back(a->ID); // Sau khi nhập Mã số, đẩy nó vào vector ID_ALL_ANIMAL
-    std::cout << "-> Nhap TUOI (Age) con vat: ";
-    in >> a->Age;
-    std::cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
-    in >> a->Weight;
+    string id;
+    float age, weight;
+    cout << "\n-> Nhap MA SO (ID) con vat: PIG_";
+    in >> id;
+    id = "PIG_" + id;
+    cout << "-> Nhap TUOI (Age) con vat: ";
+    in >> age;
+    cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
+    in >> weight;
+    a->SetID(id);
+    a->SetAge(age);
+    a->SetWeight(weight);
     return in;
 }
 

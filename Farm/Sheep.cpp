@@ -1,13 +1,18 @@
 #include "Sheep.h"
 
 istream& Sheep::getInputInfo(istream& in, std::unique_ptr<Animal> &a) {
+    string id;
+    float age, weight;
     cout << "\n-> Nhap MA SO (ID) con vat: SHEEP_";
-    in >> a->ID;
-    a->ID = "SHEEP_" + a->ID;
+    in >> id;
+    id = "SHEEP_" + id;
     cout << "-> Nhap TUOI (Age) con vat: ";
-    in >> a->Age;
+    in >> age;
     cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
-    in >> a->Weight;
+    in >> weight;
+    a->SetID(id);
+    a->SetAge(age);
+    a->SetWeight(weight);
     return in;
 }
 

@@ -1,14 +1,18 @@
 #include "Chicken.h"
 
 istream& Chicken::getInputInfo(istream& in, std::unique_ptr<Animal> &a) {
+    string id;
+    float age, weight;
     cout << "\n-> Nhap MA SO (ID) con vat: CHICKEN_";
-    in >> a->ID;
-    a->ID = "CHICKEN_" + a->ID;
-    a->ID_ALL_ANIMAL.push_back(a->ID); // Sau khi nhập Mã số, đẩy nó vào vector ID_ALL_ANIMAL
+    in >> id;
+    id = "CHICKEN_" + id;
     cout << "-> Nhap TUOI (Age) con vat: ";
-    in >> a->Age;
+    in >> age;
     cout << "-> Nhap CAN NANG (Weight) cua con vat: ";
-    in >> a->Weight;
+    in >> weight;
+    a->SetID(id);
+    a->SetAge(age);
+    a->SetWeight(weight);
     return in;
 }
 

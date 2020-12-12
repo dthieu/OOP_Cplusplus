@@ -13,7 +13,7 @@ class Animal
 public:
 	vector<string> ID_ALL_ANIMAL; // Vector lưu các Mã số của con vật (ID)
 	const static float MAX;	// lớn nhất là 100% (độ no của con vật)
-// private:
+protected:
 	string ID;	// Mã số con vật
 	float Age;	// Đơn vị: ngày tuổi
 	float Weight;	// Cân nặng
